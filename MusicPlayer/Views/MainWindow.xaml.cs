@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MusicPlayer
+namespace MusicPlayer.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -20,5 +20,27 @@ namespace MusicPlayer
         {
             InitializeComponent();
         }
+
+        private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+            {
+                // Poziva DragMove da omogućimo pomeranje prozora
+                this.DragMove();
+            }
+        }
+
+        private void MinimizeWindow(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void CloseWindow(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+        //// Ažuriranje progress bara tokom reprodukcije
+        //progressBar.Value = trenutniNapredak; // vrednost između 0 i 100
+
     }
 }

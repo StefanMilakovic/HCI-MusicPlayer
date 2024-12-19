@@ -9,7 +9,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\" />
+    <None Remove="Resources\font.otf" />
+    <None Remove="Resources\icon.png" />
+    <None Remove="Resources\menu.png" />
+    <None Remove="Resources\music.ico" />
+    <None Remove="Resources\playerDefault.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MaterialDesignThemes" Version="5.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\font.otf" />
+    <Resource Include="Resources\icon.png" />
+    <Resource Include="Resources\menu.png" />
+    <Resource Include="Resources\music.ico" />
+    <Resource Include="Resources\playerDefault.png" />
   </ItemGroup>
 
 </Project>
