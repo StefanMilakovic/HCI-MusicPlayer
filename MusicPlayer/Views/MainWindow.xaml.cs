@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using Microsoft.Win32;
+using MusicPlayer.Models;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -11,11 +13,9 @@ using System.Windows.Shapes;
 
 namespace MusicPlayer.Views
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
+        private Song currentSong;
         public MainWindow()
         {
             InitializeComponent();
@@ -25,7 +25,6 @@ namespace MusicPlayer.Views
         {
             if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
             {
-                // Poziva DragMove da omogućimo pomeranje prozora
                 this.DragMove();
             }
         }
@@ -39,8 +38,29 @@ namespace MusicPlayer.Views
         {
             this.Close();
         }
-        //// Ažuriranje progress bara tokom reprodukcije
-        //progressBar.Value = trenutniNapredak; // vrednost između 0 i 100
 
+
+        
+        
+        private void LoadSong(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Audio Files (*.mp3;*.wav)|*.mp3;*.wav";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                // Kreiraj novi objekat pesme
+                currentSong = new Song
+                {
+                    FilePath = openFileDialog.FileName,
+                    Title = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName)
+                };
+
+                // Podesi MediaElement da učita pesmu
+                mediaElement.Source = new Uri(currentSong.FilePath);
+                mediaElement.Play();
+            }
+        }
+        
+        
     }
 }

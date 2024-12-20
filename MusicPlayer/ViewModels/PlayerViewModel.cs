@@ -8,5 +8,6 @@ namespace MusicPlayer.ViewModels
 {
     internal class PlayerViewModel
     {
+
     }
 }
