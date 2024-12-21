@@ -32,15 +32,27 @@ namespace MusicPlayer.Views
         private List<string> songList;
         private int currentSongIndex;
 
+        private DispatcherTimer timer;
+
 
         public MainWindow()
         {
             InitializeComponent();
             DataContext = new MainViewModel();
             mediaElement.Volume = 0.5;
+
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += Timer_Tick;
+
+
+            //za slajder
+            mediaElement.MediaOpened += MediaElement_MediaOpened;
+            
+
         }
 
- 
+
 
         private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -60,7 +72,7 @@ namespace MusicPlayer.Views
             this.Close();
         }
 
-        
+
         private void LoadSongs(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog
@@ -88,11 +100,6 @@ namespace MusicPlayer.Views
                 }
             }
         }
-        
-
-        
-
-
 
         private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
@@ -150,6 +157,7 @@ namespace MusicPlayer.Views
                         FilePath = songList[currentSongIndex],
                         Title = System.IO.Path.GetFileNameWithoutExtension(songList[currentSongIndex])
                     };
+
                 }
             }
         }
@@ -163,9 +171,49 @@ namespace MusicPlayer.Views
             }
         }
 
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            var viewModel = DataContext as MainViewModel;
+            if (viewModel != null && mediaElement.NaturalDuration.HasTimeSpan)
+            {
+                TimeSpan currentTime = mediaElement.Position;
+                viewModel.CurrentTime = currentTime.ToString(@"mm\:ss");
+
+                TimeSpan totalDuration = mediaElement.NaturalDuration.TimeSpan;
+                viewModel.TotalDuration = totalDuration.ToString(@"mm\:ss");
+            }
+        }
+        
         private void MediaElement_MediaEnded(object sender, RoutedEventArgs e)
         {
-            NextSong_Click(sender,e);
+            timer.Stop();
+            NextSong_Click(sender, e);
+        }
+
+        
+        private void MediaElement_MediaOpened(object sender, RoutedEventArgs e)
+        {
+            var duration = mediaElement.NaturalDuration.TimeSpan.TotalSeconds;
+            SeekSlider.Maximum = duration;
+
+            timer.Start();
+            var viewModel = DataContext as MainViewModel;
+            if (viewModel != null && mediaElement.NaturalDuration.HasTimeSpan)
+            {
+                TimeSpan totalDuration = mediaElement.NaturalDuration.TimeSpan;
+
+                viewModel.TotalDuration = totalDuration.ToString(@"mm\:ss");
+            }
+        }
+        
+
+        private void SeekSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (mediaElement != null && e.NewValue != mediaElement.Position.TotalSeconds)
+            {
+                mediaElement.Position = TimeSpan.FromSeconds(e.NewValue);
+            }
         }
 
     }

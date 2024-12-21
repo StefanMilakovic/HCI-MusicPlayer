@@ -88,7 +88,11 @@
                         <Image Source="../Resources/menu.png"/>
                     </Button>
 
-                    <MediaElement x:Name="mediaElement" Grid.Row="1" LoadedBehavior="Manual" UnloadedBehavior="Stop" Source="{Binding SelectedSong.FilePath}" MediaEnded="MediaElement_MediaEnded" />
+                    <MediaElement x:Name="mediaElement" Grid.Row="1" 
+                                  LoadedBehavior="Manual" UnloadedBehavior="Stop" 
+                                  Source="{Binding SelectedSong.FilePath}"
+                                  MediaOpened="MediaElement_MediaOpened"
+                                  MediaEnded="MediaElement_MediaEnded" />
 
 
 
@@ -129,26 +133,21 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <!-- Trenutno vreme (0:00) -->
-                        <TextBlock Grid.Column="0" Text="0:00" Margin="10" Foreground="White" VerticalAlignment="Center" />
+
+                        <TextBlock x:Name="CurrentTimeTextBlock" Grid.Column="0" Text="{Binding CurrentTime, FallbackValue='00:00', TargetNullValue='00:00'}"  Margin="10" Foreground="White" VerticalAlignment="Center" />
 
                         <!-- ProgressBar (Prikaz trenutnog napretka pesme) -->
-                        <ProgressBar Grid.Column="1" Minimum="0" Maximum="100" Value="20" VerticalAlignment="Center" 
-                 Height="8" Foreground="White" Background="#2F2F2F">
-                            <ProgressBar.Resources>
-                                <!-- Stil za progress bar -->
-                                <Style TargetType="ProgressBar">
-                                    <Style.Setters>
-                                        <!-- Boje pozadine i napretka -->
-                                        <Setter Property="Foreground" Value="White"/>
-                                        <Setter Property="Background" Value="#444444"/>
-                                    </Style.Setters>
-                                </Style>
-                            </ProgressBar.Resources>
-                        </ProgressBar>
+                        <Slider x:Name="SeekSlider" Grid.Column="1" 
+                            Minimum="0" Maximum="{Binding TotalDuration, Mode=OneWay}" 
+                            Value="{Binding CurrentTimejhjghg, Mode=TwoWay}" 
+                            VerticalAlignment="Center" 
+                            Foreground="White" Background="Transparent" 
+                            ValueChanged="SeekSlider_ValueChanged" 
+                            IsMoveToPointEnabled="True">
+                        </Slider>
 
-                        <!-- Ukupno vreme (3:45) -->
-                        <TextBlock Grid.Column="2" Text="3:45" Margin="10" Foreground="White" VerticalAlignment="Center" />
+
+                        <TextBlock x:Name="TotalTimeTextBlock" Grid.Column="2" Text="{Binding TotalDuration, FallbackValue='00:00', TargetNullValue='00:00'}"  Margin="10" Foreground="White" VerticalAlignment="Center" />
                     </Grid>
 
 
