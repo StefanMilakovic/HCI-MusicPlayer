@@ -1,5 +1,8 @@
 ﻿using Microsoft.Win32;
 using MusicPlayer.Models;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,15 +14,33 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using MusicPlayer.ViewModels;
+
+using System.IO;
+using MaterialDesignThemes.Wpf;
+using System.Windows.Threading;
+using System.Windows.Media.Animation;
+
+
 namespace MusicPlayer.Views
 {
     public partial class MainWindow : Window
     {
         private Song currentSong;
+        private bool playing = false;
+
+        private List<string> songList;
+        private int currentSongIndex;
+
+
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainViewModel();
+            mediaElement.Volume = 0.5;
         }
+
+ 
 
         private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -39,28 +60,113 @@ namespace MusicPlayer.Views
             this.Close();
         }
 
-
         
-        
-        private void LoadSong(object sender, RoutedEventArgs e)
+        private void LoadSongs(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Audio Files (*.mp3;*.wav)|*.mp3;*.wav";
+            var openFileDialog = new OpenFileDialog
+            {
+                Multiselect = true,
+                Filter = "Audio Files (*.mp3;*.wav)|*.mp3;*.wav"
+            };
+
             if (openFileDialog.ShowDialog() == true)
             {
-                // Kreiraj novi objekat pesme
-                currentSong = new Song
-                {
-                    FilePath = openFileDialog.FileName,
-                    Title = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName)
-                };
+                songList = openFileDialog.FileNames.ToList();
+                currentSongIndex = 0;
+                mediaElement.Source = new Uri(songList[currentSongIndex]);
 
-                // Podesi MediaElement da učita pesmu
-                mediaElement.Source = new Uri(currentSong.FilePath);
-                mediaElement.Play();
+                var viewModel = DataContext as MainViewModel;
+                if (viewModel != null)
+                {
+                    string songTitle = System.IO.Path.GetFileName(songList[currentSongIndex]);
+                    viewModel.CurrentSongTitle = songTitle;
+                    viewModel.SelectedSong = new Song
+                    {
+                        FilePath = songList[currentSongIndex],
+                        Title = System.IO.Path.GetFileNameWithoutExtension(songList[currentSongIndex])
+                    };
+                }
             }
         }
         
+
         
+
+
+
+        private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (mediaElement.CanPause && playing)
+            {
+                mediaElement.Pause();
+                playing = false;
+                PlayPauseIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.PlayCircle;
+            }
+            else if (!playing)
+            {
+                mediaElement.Play();
+                playing = true;
+                PlayPauseIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.PauseCircle;
+            }
+        }
+
+        private void PreviousSong_Click(object sender, RoutedEventArgs e)
+        {
+            if (songList.Count > 0)
+            {
+                currentSongIndex = (currentSongIndex - 1 + songList.Count) % songList.Count;
+                mediaElement.Source = new Uri(songList[currentSongIndex]);
+                mediaElement.Play();
+
+                var viewModel = DataContext as MainViewModel;
+                if (viewModel != null)
+                {
+                    string songTitle = System.IO.Path.GetFileName(songList[currentSongIndex]);
+                    viewModel.CurrentSongTitle = songTitle;
+                    viewModel.SelectedSong = new Song
+                    {
+                        FilePath = songList[currentSongIndex],
+                        Title = System.IO.Path.GetFileNameWithoutExtension(songList[currentSongIndex])
+                    };
+                }
+            }
+        }
+
+        private void NextSong_Click(object sender, RoutedEventArgs e)
+        {
+            if (songList.Count > 0)
+            {
+                currentSongIndex = (currentSongIndex + 1) % songList.Count;
+                mediaElement.Source = new Uri(songList[currentSongIndex]);
+                mediaElement.Play();
+
+                var viewModel = DataContext as MainViewModel;
+                if (viewModel != null)
+                {
+                    string songTitle = System.IO.Path.GetFileName(songList[currentSongIndex]);
+                    viewModel.CurrentSongTitle = songTitle;
+                    viewModel.SelectedSong = new Song
+                    {
+                        FilePath = songList[currentSongIndex],
+                        Title = System.IO.Path.GetFileNameWithoutExtension(songList[currentSongIndex])
+                    };
+                }
+            }
+        }
+
+
+        private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (mediaElement != null)
+            {
+                mediaElement.Volume = e.NewValue / 100;
+            }
+        }
+
+        private void MediaElement_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            NextSong_Click(sender,e);
+        }
+
     }
 }
