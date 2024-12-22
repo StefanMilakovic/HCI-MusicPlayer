@@ -11,12 +11,9 @@ namespace MusicPlayer.Views
     {
         private Song currentSong;
         private bool playing = false;
-
         private List<string> songList;
         private int currentSongIndex;
-
         private DispatcherTimer timer;
-
 
         public MainWindow()
         {
@@ -28,8 +25,6 @@ namespace MusicPlayer.Views
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += Timer_Tick;       
         }
-
-
 
         private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -48,7 +43,6 @@ namespace MusicPlayer.Views
         {
             this.Close();
         }
-
 
         private void LoadSongs(object sender, RoutedEventArgs e)
         {
@@ -139,7 +133,6 @@ namespace MusicPlayer.Views
             }
         }
 
-
         private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (mediaElement != null)
@@ -148,7 +141,6 @@ namespace MusicPlayer.Views
             }
         }
 
-        
         private void MediaElement_MediaEnded(object sender, RoutedEventArgs e)
         {
             timer.Stop();
@@ -159,10 +151,7 @@ namespace MusicPlayer.Views
         {
             if (mediaElement.NaturalDuration.HasTimeSpan)
             {
-                // Postavi maksimum slajdera na ukupno trajanje pjesme u sekundama
                 SeekSlider.Maximum = mediaElement.NaturalDuration.TimeSpan.TotalSeconds;
-
-                // Počni tajmer za ažuriranje trenutne pozicije pjesme
                 timer.Start();
 
                 var viewModel = DataContext as MainViewModel;
@@ -174,12 +163,10 @@ namespace MusicPlayer.Views
             }
         }
 
-
         private void Timer_Tick(object sender, EventArgs e)
         {
             if (mediaElement.NaturalDuration.HasTimeSpan)
             {
-                // Ažuriraj trenutnu poziciju na slajderu
                 SeekSlider.Value = mediaElement.Position.TotalSeconds;
 
                 var viewModel = DataContext as MainViewModel;
@@ -191,12 +178,10 @@ namespace MusicPlayer.Views
             }
         }
 
-
         private void SeekSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (mediaElement != null && Math.Abs(e.NewValue - mediaElement.Position.TotalSeconds) > 1)
             {
-                // Postavi novu poziciju pjesme
                 mediaElement.Position = TimeSpan.FromSeconds(e.NewValue);
             }
         }

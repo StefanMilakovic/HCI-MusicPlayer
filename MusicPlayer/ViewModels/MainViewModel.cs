@@ -13,15 +13,16 @@ namespace MusicPlayer.ViewModels
         private string _currentTime;
         private string _totalDuration;
 
-
         public string CurrentSongTitle
         {
             get { return _currentSongTitle; }
             set
             {
-                if (_currentSongTitle != value)
+                string fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(value);
+
+                if (_currentSongTitle != fileNameWithoutExtension)
                 {
-                    _currentSongTitle = value;
+                    _currentSongTitle = fileNameWithoutExtension;
                     OnPropertyChanged();
                 }
             }
