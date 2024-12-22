@@ -137,6 +137,8 @@
                         <TextBlock x:Name="CurrentTimeTextBlock" Grid.Column="0" Text="{Binding CurrentTime, FallbackValue='00:00', TargetNullValue='00:00'}"  Margin="10" Foreground="White" VerticalAlignment="Center" />
 
                         <!-- ProgressBar (Prikaz trenutnog napretka pesme) -->
+                        
+                        <!--
                         <Slider x:Name="SeekSlider" Grid.Column="1" 
                             Minimum="0" Maximum="{Binding TotalDuration, Mode=OneWay}" 
                             Value="{Binding CurrentTimejhjghg, Mode=TwoWay}" 
@@ -145,9 +147,23 @@
                             ValueChanged="SeekSlider_ValueChanged" 
                             IsMoveToPointEnabled="True">
                         </Slider>
+                        -->
+
+                        <Slider x:Name="SeekSlider" 
+                            Grid.Row="3" Grid.Column="1"
+                            Minimum="0"
+                            Maximum="100"  
+                            ValueChanged="SeekSlider_ValueChanged"
+                            IsMoveToPointEnabled="True"
+                            VerticalAlignment="Center"
+                            Foreground="White"
+                            Background="Transparent"
+                            Style="{StaticResource MaterialDesignSlider}"
+                            Margin="10,0,10,0"/>
 
 
-                        <TextBlock x:Name="TotalTimeTextBlock" Grid.Column="2" Text="{Binding TotalDuration, FallbackValue='00:00', TargetNullValue='00:00'}"  Margin="10" Foreground="White" VerticalAlignment="Center" />
+
+                            <TextBlock x:Name="TotalTimeTextBlock" Grid.Column="2" Text="{Binding TotalDuration, FallbackValue='00:00', TargetNullValue='00:00'}"  Margin="10" Foreground="White" VerticalAlignment="Center" />
                     </Grid>
 
 

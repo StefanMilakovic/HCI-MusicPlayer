@@ -1,25 +1,8 @@
 ﻿using Microsoft.Win32;
 using MusicPlayer.Models;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
 using MusicPlayer.ViewModels;
-
-using System.IO;
-using MaterialDesignThemes.Wpf;
+using System.Windows;
 using System.Windows.Threading;
-using System.Windows.Media.Animation;
 
 
 namespace MusicPlayer.Views
@@ -43,13 +26,7 @@ namespace MusicPlayer.Views
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(1);
-            timer.Tick += Timer_Tick;
-
-
-            //za slajder
-            mediaElement.MediaOpened += MediaElement_MediaOpened;
-            
-
+            timer.Tick += Timer_Tick;       
         }
 
 
@@ -171,19 +148,6 @@ namespace MusicPlayer.Views
             }
         }
 
-
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            var viewModel = DataContext as MainViewModel;
-            if (viewModel != null && mediaElement.NaturalDuration.HasTimeSpan)
-            {
-                TimeSpan currentTime = mediaElement.Position;
-                viewModel.CurrentTime = currentTime.ToString(@"mm\:ss");
-
-                TimeSpan totalDuration = mediaElement.NaturalDuration.TimeSpan;
-                viewModel.TotalDuration = totalDuration.ToString(@"mm\:ss");
-            }
-        }
         
         private void MediaElement_MediaEnded(object sender, RoutedEventArgs e)
         {
@@ -191,27 +155,48 @@ namespace MusicPlayer.Views
             NextSong_Click(sender, e);
         }
 
-        
         private void MediaElement_MediaOpened(object sender, RoutedEventArgs e)
         {
-            var duration = mediaElement.NaturalDuration.TimeSpan.TotalSeconds;
-            SeekSlider.Maximum = duration;
-
-            timer.Start();
-            var viewModel = DataContext as MainViewModel;
-            if (viewModel != null && mediaElement.NaturalDuration.HasTimeSpan)
+            if (mediaElement.NaturalDuration.HasTimeSpan)
             {
-                TimeSpan totalDuration = mediaElement.NaturalDuration.TimeSpan;
+                // Postavi maksimum slajdera na ukupno trajanje pjesme u sekundama
+                SeekSlider.Maximum = mediaElement.NaturalDuration.TimeSpan.TotalSeconds;
 
-                viewModel.TotalDuration = totalDuration.ToString(@"mm\:ss");
+                // Počni tajmer za ažuriranje trenutne pozicije pjesme
+                timer.Start();
+
+                var viewModel = DataContext as MainViewModel;
+                if (viewModel != null)
+                {
+                    TimeSpan totalDuration = mediaElement.NaturalDuration.TimeSpan;
+                    viewModel.TotalDuration = totalDuration.ToString(@"mm\:ss");
+                }
             }
         }
-        
+
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            if (mediaElement.NaturalDuration.HasTimeSpan)
+            {
+                // Ažuriraj trenutnu poziciju na slajderu
+                SeekSlider.Value = mediaElement.Position.TotalSeconds;
+
+                var viewModel = DataContext as MainViewModel;
+                if (viewModel != null)
+                {
+                    TimeSpan currentTime = mediaElement.Position;
+                    viewModel.CurrentTime = currentTime.ToString(@"mm\:ss");
+                }
+            }
+        }
+
 
         private void SeekSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (mediaElement != null && e.NewValue != mediaElement.Position.TotalSeconds)
+            if (mediaElement != null && Math.Abs(e.NewValue - mediaElement.Position.TotalSeconds) > 1)
             {
+                // Postavi novu poziciju pjesme
                 mediaElement.Position = TimeSpan.FromSeconds(e.NewValue);
             }
         }
