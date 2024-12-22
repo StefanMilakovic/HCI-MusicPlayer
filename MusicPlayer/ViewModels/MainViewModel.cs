@@ -1,4 +1,5 @@
-﻿using MusicPlayer.Models;
+﻿using Microsoft.Win32;
+using MusicPlayer.Models;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -7,7 +8,6 @@ namespace MusicPlayer.ViewModels
 
     internal class MainViewModel: INotifyPropertyChanged
     {
-
         private string _currentSongTitle;
         private Song _selectedSong;
         private string _currentTime;
@@ -75,6 +75,8 @@ namespace MusicPlayer.ViewModels
                 }
             }
         }
+        
+
         
     }
 }

@@ -185,6 +185,7 @@ namespace MusicPlayer.Views
                 mediaElement.Position = TimeSpan.FromSeconds(e.NewValue);
             }
         }
-
+        
+ 
     }
 }
