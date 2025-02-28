@@ -2,7 +2,7 @@
 
 Ova aplikacija je razvijena u sklopu projekta na predmetu Interakcija Čovjek-Računar na Elektrotehničkom fakultetu u Banjoj Luci.
 
-<img src="https://github.com/StefanMilakovic/HCI-MusicPlayer/blob/master/MusicPlayerScreenshot.png" alt="LoginWindow" width="351">
+<img src="https://github.com/StefanMilakovic/HCI-MusicPlayer/blob/master/MusicPlayerScreenshot.png" alt="LoginWindow" width="350">
 
 
 Aplikacija Muzički plejer ima sljedeće funkcionalnosti:
